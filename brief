@@ -1,0 +1,37 @@
+Brief — StandupOS
+Problème
+
+Dans un travail d’équipe, il est difficile de savoir rapidement qui a avancé aujourd’hui et qui est bloqué, sans multiplier les réunions, messages ou outils parasites.
+Les stand-up meetings existent, mais ils sont parfois lourds, synchrones et dérivent facilement.
+
+Cible
+
+Équipes produit / tech (ou apprenants en formation) travaillant à plusieurs sur un même projet, avec besoin de rigueur et de visibilité quotidienne.
+
+Solution
+
+Une application web ultra simple qui transpose le stand-up journalier en rituel asynchrone.
+
+Chaque jour :
+
+chaque membre fait un check-in rapide (aujourd’hui / blocages / note)
+
+le statut est visible par toute l’équipe
+
+le lendemain, tout repart à zéro
+
+Aucune discussion, aucun chat, aucune gestion de projet.
+
+Objectif principal
+
+Donner une visibilité quotidienne claire sur l’état de l’équipe, tout en servant de support pédagogique pour apprendre le travail collectif structuré (GitHub, branches, pull requests).
+
+Périmètre volontairement limité
+
+Un check-in par personne et par jour
+
+Statut dérivé uniquement de la date
+
+Lecture simple, écriture rapide
+
+Pas de notifications, pas de temps réel, pas de gamification 
