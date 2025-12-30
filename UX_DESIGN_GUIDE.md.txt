@@ -1,0 +1,32 @@
+# UX/UI Design Reference Guide: "SaaS Curated Gallery" Style
+
+## 1. Vision & Atmosphere
+Create a high-end, dark-themed landing page inspired by the "Product Video Examples" aesthetic. The goal is to showcase a collection of items (cards) with a focus on visual impact, clarity, and modern SaaS feel.
+
+## 2. Layout Structure
+- **Global:** Use a clean, max-width container (max-w-7xl) with generous padding.
+- **Hero Section:** - Split layout (Left: Big Typography + Email Opt-in / Right: Visual Element).
+    - Headline should use a gradient span for the key action word.
+- **Filtering System:** Horizontal "pills" layout for categories, using semi-transparent backgrounds.
+- **Content Grid:** Responsive grid (1 col mobile, 2 cols tablet, 3-4 cols desktop) with consistent gaps (gap-6 to gap-8).
+
+## 3. Visual Identity (Design Tokens)
+- **Backgrounds:** Primary: `#000000` | Surface/Cards: `#0D0D0D` or `#111111`.
+- **Primary Gradient:** Linear from Orange (`#f97316`) to Purple (`#a855f7`) to Blue (`#3b82f6`).
+- **Typography:** - Primary Font: Geometric Sans (Inter/Geist).
+    - Hero Heading: `text-5xl` to `text-7xl`, `font-bold`, `tracking-tight`.
+    - Body Text: `text-gray-400`, `leading-relaxed`.
+- **Components Style:**
+    - **Buttons:** Large padding (`px-6 py-4`), rounded corners (`rounded-lg`), animated gradient backgrounds on hover.
+    - **Cards:** Border: `1px solid rgba(255,255,255,0.1)`, Border-radius: `1rem`, subtle scale-up on hover.
+    - **Tags/Badges:** Small font (`text-xs`), uppercase or capitalized, emoji icons allowed.
+
+## 4. UI Effects to Implement
+- **Backdrop Blur:** Use `backdrop-blur-md` on navigation and overlays.
+- **Background Blobs:** Large, blurred radial gradients (low opacity) positioned behind the hero and footer to break the "flat" black look.
+- **Glassmorphism:** Suble usage for secondary UI elements.
+
+## 5. Specific Instructions for the Agent
+- Prioritize "Scannability": Users should understand the value proposition in < 3 seconds.
+- Maintain high contrast between primary actions and secondary information.
+- Use Tailwind CSS naming conventions for implementation.
