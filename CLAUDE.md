@@ -4,100 +4,151 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-**StandupOS** - A simple async standup web application for product/tech teams. Each team member does a daily check-in (today/blockers/notes), visible to the team, resetting daily. No chat, no project management features.
+**StandupOS** - Async standup web app for teams. Daily check-ins (today/blockers/notes), visible to team, resets daily. No chat, no project management.
 
-This repository uses **BMad Method v6** - an AI-driven agile development framework with specialized agents and workflows. The `_bmad/` folder contains the framework infrastructure, not application code.
+**Current Status**: Planning/Solutioning phase. No application code yet - implementation follows architecture in `_bmad-output/planning-artifacts/`.
 
-## BMad Method Architecture
+## Critical Rules - READ FIRST
 
-### Modules
-- **BMM** (BMad Method Module): Core development lifecycle - Analysis → Planning → Solutioning → Implementation
-- **BMB** (BMad Builder Module): Tools for creating custom agents, workflows, modules
-- **CIS** (Creative Intelligence Suite): Creative problem-solving agents (brainstorming, design thinking, storytelling)
-- **Core**: Platform infrastructure (bmad-master orchestrator, workflow engine, shared tasks)
+⚠️ **PEDAGOGICAL PROJECT** - Simplicity over "best practices"
 
-### Key Agents
-| Agent | Role | Primary Workflows |
-|-------|------|-------------------|
-| Analyst (Mary) | Requirements elicitation, workflow init | workflow-init, brainstorm, product-brief, research |
-| PM (John) | Product requirements | create-prd, create-epics-and-stories, tech-spec |
-| Architect (Winston) | Technical design | create-architecture, implementation-readiness |
-| UX Designer (Sally) | User experience | create-ux-design |
-| SM (Bob) | Sprint management | sprint-planning, create-story, retrospective |
-| DEV (Amelia) | Implementation | dev-story, code-review, quick-dev |
-| TEA (Murat) | Testing architecture | testarch workflows |
+**YOU MUST:**
+- Read `_bmad-output/project-context.md` (135+ critical rules) before implementing ANY code
+- Read `_bmad-output/planning-artifacts/architecture.md` for architectural decisions
+- Follow unidirectional data flow: Components → Hooks → API Helpers → Supabase
+- Use snake_case (DB), camelCase (TS vars), PascalCase (components/interfaces)
+- Apply dual validation: Zod (client) + PostgreSQL constraints (server)
+- Define RLS policies for all Supabase tables
 
-### Development Phases
-1. **Analysis** (optional): Product brief, research, brainstorming
-2. **Planning** (required): PRD or tech-spec, UX design
-3. **Solutioning** (track-dependent): Architecture, epics & stories
-4. **Implementation**: Sprint planning → create-story → dev-story → code-review cycles
+**YOU MUST NEVER:**
+- Use React Query/TanStack Query (use useState + useEffect)
+- Use Redux/Zustand (local state only, Context for auth ONLY)
+- Call Supabase directly from components (use API helpers in lib/api/)
+- Use "I" prefix on interfaces (User NOT IUser)
+- Mix snake_case and camelCase in same layer
 
-## Working with BMad Workflows
+## Technology Stack
 
-### Activating Agents
-Agents are activated via slash commands (e.g., `/bmad:bmm:agents:analyst`) or by reading their markdown file from `_bmad/bmm/agents/`.
-
-### Running Workflows
-From an agent's menu:
-- Type workflow shorthand: `*workflow-init`, `*prd`, `*create-story`
-- Use menu number or natural language
-- Fuzzy matching is supported
-
-### Configuration
-`_bmad/bmm/config.yaml` contains:
-- `user_name`: Fakos
-- `communication_language`: french
-- `output_folder`: `_bmad-output/`
-- `planning_artifacts`: `_bmad-output/planning-artifacts/`
-- `implementation_artifacts`: `_bmad-output/implementation-artifacts/`
-
-### Status Tracking Files
-- `bmm-workflow-status.yaml`: Tracks current phase and workflow progress
-- `sprint-status.yaml`: Tracks epics/stories during implementation (Phase 4)
+- Vite + React + TypeScript (strict mode)
+- Supabase (Auth + PostgreSQL + RLS)
+- Tailwind CSS v4 (NOT v3) + shadcn/ui
+- React Router 7 (library mode, NOT framework)
+- Zod validation
+- npm (NOT yarn/pnpm)
 
 ## Project Structure
 
 ```
-StandApp/
-├── brief                    # Project brief (French) - read this first
-├── _bmad/                   # BMad framework (do not modify)
-│   ├── core/               # Platform infrastructure
-│   ├── bmm/                # Development lifecycle module
-│   ├── bmb/                # Builder tools module
-│   ├── cis/                # Creative intelligence module
-│   └── _config/            # Manifests and registry
-├── _bmad-output/           # Generated artifacts (PRD, architecture, stories)
-└── docs/                   # Project knowledge base
+_bmad/                    # BMad Method framework (DO NOT MODIFY)
+_bmad-output/            # Generated docs (PRD, architecture, stories)
+├── planning-artifacts/  # Architecture, PRD, UX design
+└── project-context.md   # 135+ implementation rules (READ FIRST)
+brief                    # Project brief in French
 ```
 
-## Key Commands
-
-### Workflow Status
-Any agent can show current status:
+**When implemented:**
 ```
-*workflow-status
-```
-
-### Quick Flow (small features)
-```
-PM agent → *tech-spec → DEV agent → *quick-dev
-```
-
-### Full Method (new products)
-```
-Analyst → *workflow-init
-PM → *prd
-UX → *create-ux-design (if UI)
-Architect → *create-architecture
-PM → *create-epics-and-stories
-SM → *sprint-planning → *create-story
-DEV → *dev-story → *code-review
+src/
+├── components/
+│   ├── ui/              # shadcn/ui only
+│   ├── auth/            # LoginForm, SignupForm, ProtectedRoute
+│   ├── standup/         # StandupForm, StandupCard, StandupFormModal
+│   └── team/            # TeamGrid, MemberCard
+├── hooks/               # useAuth, useStandups, useProfile
+├── lib/api/             # standups.ts, profiles.ts (API layer)
+├── types/               # database.types.ts, schemas.ts
+└── contexts/            # AuthContext (auth ONLY)
 ```
 
-## Important Notes
+## Database Schema (2 tables)
 
-- **Fresh chats**: Start a new conversation for each workflow to avoid context issues
-- **Language**: Documents and communication are in French per config
-- **Output location**: All generated documents go to `_bmad-output/`
-- **Workflow engine**: Complex workflows use step-file architecture with JIT loading - follow the workflow.xml or workflow.md instructions exactly
+```sql
+-- profiles: User data
+profiles (id, email, full_name, avatar_url, created_at, updated_at)
+
+-- standups: Daily entries (one per user per day)
+standups (id, user_id, date, yesterday, today, is_blocked, blocker_description, created_at, updated_at)
+UNIQUE(user_id, date)
+```
+
+## Key Commands (When Implemented)
+
+### Initial Setup
+```bash
+npm create vite@latest standapp -- --template react-ts
+cd standapp && npm install
+npm install @supabase/supabase-js react-router zod
+npm install -D tailwindcss@next @tailwindcss/vite@next
+npx tailwindcss init
+npx shadcn@latest init
+```
+
+### Development
+```bash
+npm run dev              # Start dev server
+npm run build            # Build for production
+npm run preview          # Preview production build
+```
+
+### Supabase
+```bash
+supabase migration new <name>  # Create migration
+supabase db push               # Apply migrations
+npx supabase gen types typescript --local > src/types/database.types.ts
+```
+
+## BMad Method Workflows
+
+**Communication**: French (per config)
+**Output**: `_bmad-output/`
+
+### Activating Agents
+`/bmad:bmm:agents:<agent>` or read from `_bmad/bmm/agents/<agent>.md`
+
+Agents: Analyst (Mary), PM (John), Architect (Winston), UX (Sally), SM (Bob), DEV (Amelia), TEA (Murat)
+
+### Common Workflows
+```
+*workflow-status          # Show current phase/progress
+*prd                      # Create PRD
+*create-architecture      # Create architecture doc
+*create-story             # Create user story
+*dev-story                # Implement story
+*code-review              # Review implementation
+```
+
+### Development Phases
+1. Analysis (optional): Product brief, research
+2. Planning (required): PRD, UX design
+3. Solutioning: Architecture, epics/stories
+4. Implementation: Sprint planning → stories → code → review
+
+## Code Style
+
+- TypeScript strict mode, NO `any` types
+- Named exports (except pages/routes)
+- Domain-based folders: auth/, standup/, team/
+- One component per file, file name matches export
+- Centralized error handling: `handleSupabaseError()` from lib/errorHandler.ts
+- Import order: React → External libs → Internal → Types → Styles
+
+## Implementation Order
+
+1. Auth (FR1-FR4): LoginForm → SignupForm → AuthContext → ProtectedRoute
+2. Standup (FR5-FR11): StandupForm → StandupFormModal → API helpers → hooks
+3. Team View (FR12-FR17): TeamGrid → MemberCard → Date filtering
+
+## Important Quirks
+
+- Session expires at midnight (0h00) - aligned with daily standup cycle
+- One standup per user per day: UNIQUE constraint enforced
+- Tailwind v4 syntax different from v3 - use `@next` tag
+- React Router 7 library mode - NO file-based routing
+- Manual setup preferred (pedagogical) - NO CLI scaffolding beyond Vite
+
+## Key Files
+
+- `_bmad-output/project-context.md` - **READ BEFORE IMPLEMENTING** (135+ rules)
+- `_bmad-output/planning-artifacts/architecture.md` - Complete architecture
+- `_bmad-output/planning-artifacts/prd.md` - Requirements (FR1-FR17, NFR1-NFR13)
+- `_bmad/bmm/config.yaml` - User config (name: Fakos, lang: french)
